@@ -526,7 +526,7 @@ for h in filtered:
             # Name + location + hide button
             name_col, hide_col = st.columns([5, 1])
             if h['website'] and h['website'].lower() != "nan":
-                name_col.markdown(f"#### {h['name']} [🌐 website]({h['website']})")
+                name_col.markdown(f"#### {h['name']}\n<span style='font-size:12px'>[🌐 website]({h['website']})</span>", unsafe_allow_html=True)
             else:
                 name_col.markdown(f"#### {h['name']}")
             if hide_col.button("Hide 👁", key=f"hide_{h['col']}", help="Hide this hotel from view"):
@@ -557,25 +557,24 @@ for h in filtered:
 
             st.write("")
 
-            # Rate metrics
+            # Rate metrics (smaller format)
             if not h["has_rate"]:
                 st.warning("⚠️ Rate not provided by this hotel")
             else:
                 m1, m2, m3 = st.columns(3)
                 # Show $/pp and $/room for per-person hotels
                 if h["is_per_person"]:
-                    m1.metric("💵 Rate ($/pp/night)", h["rate_display"])
-                    m2.metric("🛏 Rate ($/room/night)", h["rate_display_room"])
+                    m1.markdown(f"**💵 Rate ($/pp/night)**<br><span style='font-size:20px; color:green; font-weight:bold'>{h['rate_display']}</span>", unsafe_allow_html=True)
+                    m2.markdown(f"**🛏 Rate ($/room/night)**<br><span style='font-size:20px; color:green; font-weight:bold'>{h['rate_display_room']}</span>", unsafe_allow_html=True)
                 else:
-                    m1.metric("💵 Room Rate", h["rate_display"])
-                    m2.metric("🏖 Resort Fee", f"${h['resort_fee']:.0f}/night" if h["resort_fee"] > 0 else "—")
+                    m1.markdown(f"**💵 Room Rate**<br><span style='font-size:20px; color:green; font-weight:bold'>{h['rate_display']}</span>", unsafe_allow_html=True)
+                    m2.markdown(f"**🏖 Resort Fee**<br><span style='font-size:16px'>${h['resort_fee']:.0f}/night</span>" if h["resort_fee"] > 0 else "**🏖 Resort Fee**<br>—", unsafe_allow_html=True)
                 if h["is_range"]:
-                    m3.metric("🏨 Est. Accommodation",
-                              f"${h['est_cost']:,.0f} – ${h['est_cost_hi']:,.0f}")
+                    m3.markdown(f"**🏨 Est. Accommodation**<br><span style='font-size:16px'>${h['est_cost']:,.0f} – ${h['est_cost_hi']:,.0f}</span>", unsafe_allow_html=True)
                     st.info(f"ℹ️ Rate range: **{h['rate_display']}** ({h['rate_source']}). "
                             f"Estimated accommodation shown for low and high end of range.")
                 else:
-                    m3.metric("🏨 Est. Accommodation", f"${h['est_cost']:,.0f}")
+                    m3.markdown(f"**🏨 Est. Accommodation**<br><span style='font-size:16px'>${h['est_cost']:,.0f}</span>", unsafe_allow_html=True)
                 # Per-person note
                 if h["is_per_person"]:
                     st.info(f"ℹ️ Rate is **per person/night** (double occupancy). "
