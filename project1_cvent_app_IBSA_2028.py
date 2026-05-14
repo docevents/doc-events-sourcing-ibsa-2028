@@ -21,6 +21,9 @@ st.markdown("""
         background: #fff8e1; border: 1px solid #FBBD1E;
         border-radius: 6px; padding: 10px 14px; margin-top: 8px; font-size: 13px; line-height: 1.8;
     }
+    /* Reduce metric font size */
+    [data-testid="metric-container"] div:nth-child(1) { font-size: 14px !important; }
+    [data-testid="metric-container"] div:nth-child(2) { font-size: 16px !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -217,6 +220,7 @@ p1_meeting_days = 2
 # ── Row indices ───────────────────────────────────────────────────────────────
 r_name         = find_row(df, "Venue Name",                             exact=True)
 r_address      = find_row(df, "Venue Address",                          exact=True)
+r_website      = find_row(df, "Venue Website",                          exact=True)
 r_desc         = find_row(df, "Venue Description",                      exact=True)
 r_proposed_date = find_row(df, "Proposed Date")
 r_alt_date_1   = find_row(df, "Guest Room Dates (Alternate 1")
@@ -368,6 +372,7 @@ for col in hotel_cols:
         "col":           col,
         "name":          get_val(df, r_name,       col),
         "address":       parse_address(get_val(df, r_address, col)),
+        "website":       get_val(df, r_website,    col),
         "description":   short_desc(get_val(df, r_desc, col)),
         "dates":         dates_str,
         "alt_dates":     alt_date_1,
@@ -519,7 +524,10 @@ for h in filtered:
         with st.container(border=True):
             # Name + location + hide button
             name_col, hide_col = st.columns([5, 1])
-            name_col.markdown(f"#### {h['name']}")
+            if h['website'] and h['website'].lower() != "nan":
+                name_col.markdown(f"#### [🔗 {h['name']}]({h['website']})")
+            else:
+                name_col.markdown(f"#### {h['name']}")
             if hide_col.button("Hide 👁", key=f"hide_{h['col']}", help="Hide this hotel from view"):
                 st.session_state.hidden.add(h['col'])
                 st.session_state.selected.discard(h['col'])
