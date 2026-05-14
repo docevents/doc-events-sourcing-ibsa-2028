@@ -30,7 +30,6 @@ st.markdown("""
 
 st.markdown("""
 <div class="doc-header">
-    <h1>NSM_IBSA_2028</h1>
     <p>Doc Events – Hotel Selection & Sourcing</p>
 </div>
 """, unsafe_allow_html=True)
@@ -232,6 +231,9 @@ r_room_rate    = find_row(df, "Guest Room Rates - Any (Run of House)", exact=Fal
 r_alt_room_rate_1 = find_row(df, "Guest Room Rates - Any (Run of House) (Alternate 1")
 r_alt_room_rate_2 = find_row(df, "Guest Room Rates - Any (Run of House) (Alternate 2")
 r_room_single  = find_row(df, "Guest Room Rates - Single (1 Bed)",      exact=True)
+r_staff_rate   = find_row(df, "Guest Room Rates - Staff",               exact=True)
+r_staff_alt_1  = find_row(df, "Guest Room Rates - Staff (Alternate 1")
+r_staff_alt_2  = find_row(df, "Guest Room Rates - Staff (Alternate 2")
 r_total_nights = find_row(df, "Total Guest Room Nights",                exact=True)
 r_room_cost    = find_row(df, "Total Guest Room Cost",                  exact=True)
 r_resort_fee   = find_row(df, "Resort Fee",                             exact=True)
@@ -287,8 +289,16 @@ for col in hotel_cols:
         # Fallback: if line 58 empty, try line 59
         if not roh_str or roh_str.lower() == "nan":
             roh_str = get_val(df, r_alt_room_rate_2, col)
+        # Fallback: if still empty, try Staff (Alternate)
+        if not roh_str or roh_str.lower() == "nan":
+            roh_str = get_val(df, r_staff_alt_1, col)
+        if not roh_str or roh_str.lower() == "nan":
+            roh_str = get_val(df, r_staff_alt_2, col)
     else:
         roh_str = get_val(df, r_room_rate, col)
+        # Fallback: if ROH rate is zero/empty, check Staff rate
+        if not roh_str or roh_str.lower() == "nan":
+            roh_str = get_val(df, r_staff_rate, col)
     
     single_str = get_val(df, r_room_single,  col)
     add_det    = get_val(df, r_add_details,  col)
